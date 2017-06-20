@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="TabSwipe.widget.TabSwipe" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../../xsd/widget.xsd">
+    <name>Tab Swipe</name>
+    <description>The description of this widget.</description>
+
+    <icon />
+    <properties>
+        <property key="targetName" type="string" required="true">
+            <caption>Target Name</caption>
+            <category>Appearance</category>
+            <description></description>
+        </property>
+        <property key="animationStyle" type="enumeration" required="true" defaultValue="moveIn">
+            <caption>Animation Style</caption>
+            <category>Appearance</category>
+            <description></description>
+            <enumerationValues>
+                <enumerationValue key="moveIn">Move In</enumerationValue>
+                <enumerationValue key="moveOver">Move Over</enumerationValue>
+            </enumerationValues>
+        </property>
+        <property key="tabNavStyle" type="enumeration" required="true" defaultValue="tabs">
+            <caption>Tab Style</caption>
+            <category>Appearance</category>
+            <description></description>
+            <enumerationValues>
+                <enumerationValue key="tabs">Tabs</enumerationValue>
+                <enumerationValue key="indicators">Indicators</enumerationValue>
+            </enumerationValues>
+        </property>
+    </properties>
+</widget>
+

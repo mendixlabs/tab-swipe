@@ -1,0 +1,38 @@
+.swipe-tab > .tab-content > .tab-pane {
+    display: block;
+}
+
+.swipe-tab > .mx-tabcontainer-content {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    position: relative;
+    transition: height .2s;
+    -webkit-transition: height .2s;
+}
+
+.swipe-tab > .mx-tabcontainer-content > .mx-tabcontainer-pane {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.swipe-tab > .mx-tabcontainer-content.animate > .tab-pane {
+    transition: all .6s;
+    -webkit-transition: all .6s;
+    will-change: transform, opacity;
+}
+
+.swipe-tab.use-indicators {
+    position: relative;    
+}
+
+.swipe-tab.use-indicators > .carousel-indicators > li {
+    text-indent: -9999px;   
+}
+
+.swipe-tab > .mx-tabcontainer-content > .mx-tabcontainer-pane {
+    
+}
