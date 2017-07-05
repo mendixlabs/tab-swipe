@@ -84,19 +84,9 @@ class TabSwipe extends WidgetBase {
      */
     update(contextObject: mendix.lib.MxObject, callback: () => void) {
         if (this.targetWidget) {
-            console.log("============== UPDATE===========");
-            this.targetWidget.getChildren().forEach( (child: TabPan) => {
-                if (child.index === 0) console.log("========");
-                console.log(`child ${child.index} width: ${child.domNode.offsetWidth}, height: ${child.domNode.offsetHeight} `);
-            });
             domClass.add(this.targetNode, this.settings.swipeClass);
-            // this.getVisableTabs();
-            this.setTabNavStyle(); // indicators
-            // this.setTabIndexZ(); // setting z-index
             this.hammerTime();
             this._setupEvents();
-
-            // this.loadAllTabContent(this.targetWidget, this.targetWidget._active);
         }
         callback();
     }
@@ -112,10 +102,6 @@ class TabSwipe extends WidgetBase {
             domClass.remove(navNode, [ "nav", "nav-tabs", "mx-tabcontainer-tabs" ]);
             domClass.add(navNode, "carousel-indicators");
         }
-    }
-    setTabIndexZ() {
-        const tabChildren = this.targetWidget.getChildren() as TabPan[];
-        tabChildren.forEach(tabPan => tabPan.domNode.style.zIndex = `${tabChildren.length - tabPan.index}`);
     }
 
     /**
@@ -142,19 +128,13 @@ class TabSwipe extends WidgetBase {
         }));
     }
 
-    /**
-     * called when the widget is destroyed.
-     */
     uninitialize() {
         if (this.carousel) {
             this.carousel.destroy();
         }
         return true;
     }
-    /**
-     * setup hammer js function
-     * connect onchange funtion for swipe changes, to update tab headers.
-     */
+
     hammerTime() {
         const swipeOptions: SwipeOptions = {
             contentContainer: this.targetWidget.domNode.querySelector(this.settings.selectionClass) as HTMLElement,
