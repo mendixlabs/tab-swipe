@@ -46,12 +46,12 @@ export class HammerSwipe {
             if (tabPan.index === seeTabPan.index) {
                 seeTabPan.visibilityIndex = index;
                 tabPan.visibilityIndex = index;
-                return;
+                return; // Not useful - Doesn't work.
             }
         });
         this.visibleTabs.forEach((tabPan, index) => {
             const diff = index - seeTabPan.visibilityIndex;
-            const transform = `translate3d(${diff * 100}%, 0, 0)`;
+            const transform = `translate3d(${diff * 100}%, 0px, 0px)`;
             tabPan.domNode.style.transform = transform;
         });
     }
@@ -68,7 +68,7 @@ export class HammerSwipe {
             this.visibleTabs[this.activePan.displayIndex + 1].domNode.style.transform = */
            // this.container.style.transform = `translate3d(${-1 * ratioMoved * 100}%, 0%, 0%);`;
             this.container.classList.add("animate");
-            this.options.contentContainer.style.transform = `translate3d(${-1 * ratioMoved * 100}%, 0%, 0%);`;
+            this.container.style.transform = `translate3d(${-1 * Math.abs(ratioMoved * 100)}%, 0px, 0px)`;
         }
     }
 
@@ -83,11 +83,13 @@ export class HammerSwipe {
         if (event.type === "panend" || event.type === "pancancel") {
             this.hammer.stop(false);
             if (Math.abs(percent) > this.threshold && event.type === "panend") {
+                const previousIndex = this.currentIndex;
                 this.currentIndex += (percent < 0) ? 1 : -1;
 
                 this.currentIndex = Math.max(0, Math.min(this.currentIndex, this.panes.length - 1));
-                const tabPan = this.visibleTabs.filter(tabPan => tabPan.index === this.currentIndex)[0];
-                this.options.tabContainer.showTab(tabPan);
+                const tabPane = this.visibleTabs.filter(tabPan => tabPan.index === this.currentIndex)[0];
+                this.options.tabContainer.showTab(tabPane);
+                this.panes[previousIndex].classList.add(previousIndex < this.currentIndex ? "prev" : "next");
             }
             percent = 0;
             animate = true;

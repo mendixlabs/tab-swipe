@@ -5,7 +5,7 @@
 .swipe-tab > .mx-tabcontainer-content {
     width: 100%;
     height: auto;
-    overflow: hidden;
+    /*overflow: hidden;*/
     position: relative;
     transition: height 0.2s;
     -webkit-transition: height 0.2s;
@@ -32,4 +32,16 @@
 
 .swipe-tab.use-indicators > .carousel-indicators > li {
     text-indent: -9999px;   
+}
+
+/* EDWIN CODE */
+.mx-tabcontainer {
+    overflow: hidden;
+}
+
+.tab-pane.mx-tabcontainer-pane.prev,
+.tab-pane.mx-tabcontainer-pane.next {
+    position: absolute;
+    top: 0;
+    width: 100%;
 }
