@@ -5,24 +5,24 @@
 
     <icon />
     <properties>
-        <property key="targetName" type="string" required="true">
-            <caption>Target Name</caption>
-            <category>Appearance</category>
-            <description></description>
+        <property key="targetName" type="string">
+            <caption>Target name</caption>
+            <category>General</category>
+            <description>Name of the tab-container. Place this widget directly below the tab container</description>
         </property>
         <property key="animationStyle" type="enumeration" required="true" defaultValue="moveIn">
-            <caption>Animation Style</caption>
+            <caption>Animation style</caption>
             <category>Appearance</category>
             <description></description>
             <enumerationValues>
-                <enumerationValue key="moveIn">Move In</enumerationValue>
-                <enumerationValue key="moveOver">Move Over</enumerationValue>
+                <enumerationValue key="moveIn">Move in</enumerationValue>
+                <enumerationValue key="moveOver">Move over</enumerationValue>
             </enumerationValues>
         </property>
         <property key="tabNavStyle" type="enumeration" required="true" defaultValue="tabs">
-            <caption>Tab Style</caption>
+            <caption>Tab style</caption>
             <category>Appearance</category>
-            <description></description>
+            <description>Tabs: display as default mendix tabs. Indicators: Use carousel-like indicators instead of tab-pages for navigation </description>
             <enumerationValues>
                 <enumerationValue key="tabs">Tabs</enumerationValue>
                 <enumerationValue key="indicators">Indicators</enumerationValue>
