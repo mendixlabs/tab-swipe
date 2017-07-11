@@ -1,8 +1,8 @@
-.swipe-tab > .tab-content > .tab-pane {
+/*.widget-tab-swipe > .tab-content > .tab-pane {
     display: block;
-}
+}*/
 
-.swipe-tab > .mx-tabcontainer-content {
+.widget-tab-swipe > .mx-tabcontainer-content {
     width: 100%;
     height: auto;
     /*overflow: hidden;*/
@@ -11,26 +11,29 @@
     -webkit-transition: height 0.2s;
 }
 
-.swipe-tab > .mx-tabcontainer-content > .mx-tabcontainer-pane {
+.widget-tab-swipe > .mx-tabcontainer-content > .mx-tabcontainer-pane {
     width: 100%;
     height: auto;
     will-change: transform, opacity;
     transition: all 0.6s;
+    -webkit-transition: all 0.6s;
     top: 0;
     left: 0;
 }
 
-.swipe-tab > .mx-tabcontainer-content.animate > .tab-pane {
+/*
+
+.widget-tab-swipe > .mx-tabcontainer-content.animate > .tab-pane {
     transition: all 0.6s ease-in-out;
     -webkit-transition: all 0.6s;
     will-change: transform, opacity;
 }
 
-.swipe-tab.use-indicators {
+.widget-tab-swipe.use-indicators {
     position: relative;
 }
 
-.swipe-tab.use-indicators > .carousel-indicators > li {
+.widget-tab-swipe.use-indicators > .carousel-indicators > li {
     text-indent: -9999px;   
 }
 
