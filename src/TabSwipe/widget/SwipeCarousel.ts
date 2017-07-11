@@ -7,14 +7,14 @@ export interface SwipeOptions {
     effect: "moveIn" | "moveOver";
 }
 
-export class HammerSwipe {
+export class SwipeCarousel {
     private container: HTMLElement;
     private options: SwipeOptions;
     private tabPanes: TabPan[];
     private visibleTabs: TabPan[];
     private activePan: TabPan;
 
-    public panes: HTMLElement[];
+    private panes: HTMLElement[];
     private containerSize: number;
     private currentIndex: number;
     private hammer: HammerManager;
@@ -32,9 +32,13 @@ export class HammerSwipe {
         this.activePan = options.tabContainer._active;
 
         this.containerSize = this.container.offsetWidth;
+        this.hammerSetup();
+    }
+
+    hammerSetup() {
         this.hammer = new Hammer.Manager(this.container);
         this.hammer.add(new Hammer.Pan({ threshold: 10 }));
-        this.hammer.on("panstart panmove", event => this.onPanMove(event));
+        this.hammer.on("panstart panmove", event => this.updateAnimation(event));
         this.hammer.on("panend pancancel", event => this.onPanEnd(event));
         this.options.tabContainer.showTab(this.activePan);
         this.showTab(this.activePan);
@@ -57,6 +61,7 @@ export class HammerSwipe {
     }
 
     private onPanMove(event: HammerInput) {
+// <<<<<<< HEAD:src/TabSwipe/widget/HammerCarousel.ts
         const ratioMoved = event.deltaX / this.container.offsetWidth; // no-of-pages-moved or %age moved
 
         if (event.type === "panmove") {
@@ -68,12 +73,20 @@ export class HammerSwipe {
             this.visibleTabs[this.activePan.displayIndex + 1].domNode.style.transform = */
            // this.container.style.transform = `translate3d(${-1 * ratioMoved * 100}%, 0%, 0%);`;
             this.container.classList.add("animate");
-            this.container.style.transform = `translate3d(${-1 * Math.abs(ratioMoved * 100)}%, 0px, 0px)`;
+            this.container.style.transform = `translate3d(${-1 * ratioMoved * 100}%, 0px, 0px)`;
+/* =======
+        const diff = this.container.offsetWidth - event.deltaX;
+        if (event.type === "panmove" && !(diff % 3)) {
+            this.options.contentContainer.style.transform = `translate3d(${diff}px, 0%, 0%)`;
+>>>>>>> Renamed HammerCarousel to SwipeCarousel:src/TabSwipe/widget/SwipeCarousel.ts
+*/
         }
+    }
+    private updateAnimation(event: HammerInput) {
+        requestAnimationFrame(() => this.onPanMove(event));
     }
 
     private onPanEnd(event: HammerInput) {
-        // const ratioMoved = Math.abs(event.deltaX) / this.container.offsetWidth;
         const numberInPercent = 100;
         const delta = event.deltaX;
         let percent = (numberInPercent / this.containerSize) * delta;
@@ -85,16 +98,22 @@ export class HammerSwipe {
             if (Math.abs(percent) > this.threshold && event.type === "panend") {
                 const previousIndex = this.currentIndex;
                 this.currentIndex += (percent < 0) ? 1 : -1;
+// <<<<<<< HEAD:src/TabSwipe/widget/HammerCarousel.ts
 
                 this.currentIndex = Math.max(0, Math.min(this.currentIndex, this.panes.length - 1));
                 const tabPane = this.visibleTabs.filter(tabPan => tabPan.index === this.currentIndex)[0];
                 this.options.tabContainer.showTab(tabPane);
                 this.panes[previousIndex].classList.add(previousIndex < this.currentIndex ? "prev" : "next");
+/*=======
+                const minValue = Math.min(this.currentIndex, this.panes.length - 1);
+                this.currentIndex = Math.max(0, minValue);
+                const tabPan = this.visibleTabs.filter(visibleTab => visibleTab.index === this.currentIndex)[0];
+                this.options.tabContainer.showTab(tabPan);
+>>>>>>> Renamed HammerCarousel to SwipeCarousel:src/TabSwipe/widget/SwipeCarousel.ts*/
             }
             percent = 0;
             animate = true;
         }
-        // this.show(this.currentIndex, percent, animate);
         this.ticking = false;
     }
 

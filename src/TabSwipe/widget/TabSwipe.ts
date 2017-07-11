@@ -7,7 +7,7 @@ import * as registry from "dijit/registry";
 
 import "./ui/TabSwipe.css";
 
-import { HammerSwipe as HammerCarousel, SwipeOptions } from "./HammerCarousel";
+import { SwipeCarousel, SwipeOptions } from "./SwipeCarousel";
 
 export interface TabContainer extends mxui.widget._WidgetBase {
     declaredClass: "mxui.widget.TabContainer";
@@ -51,7 +51,7 @@ class TabSwipe extends WidgetBase {
     private targetName: string;
     private targetWidget: TabContainer;
     private targetNode: HTMLElement;
-    private carousel: HammerCarousel;
+    private carousel: SwipeCarousel;
     private tabNavStyle: "tabs" | "indicators";
     private animationStyle: "moveIn" | "moveOver";
 
@@ -59,7 +59,7 @@ class TabSwipe extends WidgetBase {
         this.settings = {
             activeTabHeight: 0,
             selectionClass: ".mx-tabcontainer-content",
-            swipeClass: "swipe-tab",
+            swipeClass: "widget-tab-swipe",
             targetWidgetType: "mxui.widget.TabContainer"
         };
         this.targetNode = this.findTargetNode(this.targetName);
@@ -68,11 +68,6 @@ class TabSwipe extends WidgetBase {
             this.targetWidget.connectedTabSwipe = this.id;
             domClass.add(this.targetWidget.domNode, this.settings.swipeClass);
         }
-        console.log("========== POSTCREATE==========");
-        this.targetWidget.getChildren().forEach( (child: TabPan) => {
-            if (child.index === 0) console.log("========");
-            console.log(`child ${child.index} width: ${child.domNode.offsetWidth}, height: ${child.domNode.offsetHeight} `);
-        });
     }
 
     /**
@@ -86,7 +81,7 @@ class TabSwipe extends WidgetBase {
         if (this.targetWidget) {
             domClass.add(this.targetNode, this.settings.swipeClass);
             this.hammerTime();
-            this._setupEvents();
+            this.setupEvents();
         }
         callback();
     }
@@ -107,7 +102,7 @@ class TabSwipe extends WidgetBase {
     /**
      * connect target widget events
      */
-    _setupEvents() {
+    setupEvents() {
         // connect to tab clicking
         this.own(aspect.after(this.targetWidget, "showTab", (deferred: any, args: any) => {
             const tab = args[0] as TabPan;
@@ -118,11 +113,8 @@ class TabSwipe extends WidgetBase {
             this.carousel.showTab(args[0] as TabPan);
         }));
 
-        this.own(aspect.after(this.targetWidget, "onHideTab", (deferred: any, args: any) => {
-            const tab = args[0];
+        this.own(aspect.after(this.targetWidget, "onHideTab", () => {
             if (this.targetWidget._active) {
-                logger.debug(this.id + "_TabContainer.onHideTab:", tab.index,
-                    "active", this.targetWidget._active.index);
                 this.carousel.showTab(this.targetWidget._active);
             }
         }));
@@ -141,7 +133,7 @@ class TabSwipe extends WidgetBase {
             effect: this.animationStyle,
             tabContainer: this.targetWidget
         };
-        this.carousel = new HammerCarousel(swipeOptions);
+        this.carousel = new SwipeCarousel(swipeOptions);
     }
 
     private checkCompatibility(widget: TabContainer) {
@@ -155,7 +147,7 @@ class TabSwipe extends WidgetBase {
         }
 
         if (!widget._tabList || !widget._tabContent || !widget.showTab || !widget.onShowTab || !widget.onHideTab) {
-            this.showError(`Target widget ${this.targetName} is not compatible with this widget.`);
+            this.showError(`The widget is not compatible with this mendix version.`);
             return false;
         }
         if (widget.connectedTabSwipe) {
