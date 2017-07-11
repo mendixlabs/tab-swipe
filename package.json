@@ -21,6 +21,8 @@
   "devDependencies": {
     "@types/big.js": "0.0.31",
     "@types/dojo": "^1.9.37",
+    "@types/react": "^15.0.16",
+    "@types/react-dom": "^0.14.23",
     "@types/hammerjs": "^2.0.34",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.4",
@@ -36,6 +38,8 @@
     "grunt-webpack": "^3.0.0",
     "json-loader": "^0.5.4",
     "mendix-client": "git+https://github.com/FlockOfBirds/Mendix-client-typing.git",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
     "source-map-loader": "^0.2.0",
     "style-loader": "^0.18.2",
     "ts-loader": "^2.2.2",
