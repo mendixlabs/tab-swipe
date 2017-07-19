@@ -20,6 +20,7 @@ export class SwipeCarousel {
     private hammer: HammerManager;
     private threshold: number;
     private ticking: boolean;
+    private timeoutValue: number;
 
     constructor(options: SwipeOptions) {
         this.options = options;
@@ -38,83 +39,58 @@ export class SwipeCarousel {
     hammerSetup() {
         this.hammer = new Hammer.Manager(this.container);
         this.hammer.add(new Hammer.Pan({ threshold: 10 }));
-        this.hammer.on("panstart panmove", event => this.updateAnimation(event));
-        this.hammer.on("panend pancancel", event => this.onPanEnd(event));
+        this.hammer.on("pan", event => this.onPanMove(event));
         this.options.tabContainer.showTab(this.activePan);
         this.showTab(this.activePan);
     }
 
-    showTab(seeTabPan: TabPan) {
+    showTab(showTabPane: TabPan) {
         this.visibleTabs = this.tabPanes.filter(tabPan => !tabPan._hidden);
+        this.activePan = this.options.tabContainer._active;
+        showTabPane.visibilityIndex = this.visibleTabs.indexOf(showTabPane);
         this.visibleTabs.forEach((tabPan, index) => {
-            if (tabPan.index === seeTabPan.index) {
-                seeTabPan.visibilityIndex = index;
-                tabPan.visibilityIndex = index;
-                return; // Not useful - Doesn't work.
-            }
-        });
-        this.visibleTabs.forEach((tabPan, index) => {
-            const diff = index - seeTabPan.visibilityIndex;
+            const diff = index - showTabPane.visibilityIndex;
             const transform = `translate3d(${diff * 100}%, 0px, 0px)`;
             tabPan.domNode.style.transform = transform;
         });
     }
 
     private onPanMove(event: HammerInput) {
-// <<<<<<< HEAD:src/TabSwipe/widget/HammerCarousel.ts
-        const ratioMoved = event.deltaX / this.container.offsetWidth; // no-of-pages-moved or %age moved
-
-        if (event.type === "panmove") {
-           /* const visibleIndex = (Math.abs(Math.round(ratioMoved)) >= this.visibleTabs.length)
-            ? this.visibleTabs.length - 1
-            : Math.round(ratioMoved) < 0
-                ? 0
-                : Math.round(ratioMoved);
-            this.visibleTabs[this.activePan.displayIndex + 1].domNode.style.transform = */
-           // this.container.style.transform = `translate3d(${-1 * ratioMoved * 100}%, 0%, 0%);`;
-            this.container.classList.add("animate");
-            this.container.style.transform = `translate3d(${-1 * ratioMoved * 100}%, 0px, 0px)`;
-/* =======
-        const diff = this.container.offsetWidth - event.deltaX;
-        if (event.type === "panmove" && !(diff % 3)) {
-            this.options.contentContainer.style.transform = `translate3d(${diff}px, 0%, 0%)`;
->>>>>>> Renamed HammerCarousel to SwipeCarousel:src/TabSwipe/widget/SwipeCarousel.ts
-*/
+        const ratioMoved = (event.deltaX / this.container.offsetWidth) * 100 ; // no-of-pages-moved or %age moved
+        if (event.isFirst) { // its not working here. the code here should be in panonstart event
+            this.visibleTabs = this.tabPanes.filter(tabPan => !tabPan._hidden); // visible tabs;
+            this.activePan = this.options.tabContainer._active;
+            this.activePan.visibilityIndex = this.visibleTabs.indexOf(this.activePan);
         }
-    }
-    private updateAnimation(event: HammerInput) {
-        requestAnimationFrame(() => this.onPanMove(event));
-    }
 
-    private onPanEnd(event: HammerInput) {
-        const numberInPercent = 100;
-        const delta = event.deltaX;
-        let percent = (numberInPercent / this.containerSize) * delta;
-        let animate = false;
+        this.container.classList.add("animate");
+        // DJK: to many translate3ds modify to use %age of tabcontent width eg:
+        // tabContent width for all tabs = noOfTabs * 100%.
+        // each unit tabWidth = 100%/noOfTabs (the result is a %age);
+        // there after move the tabContent with translate3d(). instead of applying
+        // it to every tab like you did below
+        this.visibleTabs.forEach((tabPan, index) => {
+            const diff = index - this.activePan.visibilityIndex;
+            const transform = `translate3d(${(diff * 100) + ratioMoved}%, 0px, 0px)`;
+            tabPan.domNode.style.transform = transform;
+        });
 
-        percent = percent > numberInPercent ? numberInPercent : percent;
-        if (event.type === "panend" || event.type === "pancancel") {
-            this.hammer.stop(false);
-            if (Math.abs(percent) > this.threshold && event.type === "panend") {
-                const previousIndex = this.currentIndex;
-                this.currentIndex += (percent < 0) ? 1 : -1;
-// <<<<<<< HEAD:src/TabSwipe/widget/HammerCarousel.ts
-
-                this.currentIndex = Math.max(0, Math.min(this.currentIndex, this.panes.length - 1));
-                const tabPane = this.visibleTabs.filter(tabPan => tabPan.index === this.currentIndex)[0];
-                this.options.tabContainer.showTab(tabPane);
-                this.panes[previousIndex].classList.add(previousIndex < this.currentIndex ? "prev" : "next");
-/*=======
-                const minValue = Math.min(this.currentIndex, this.panes.length - 1);
-                this.currentIndex = Math.max(0, minValue);
-                const tabPan = this.visibleTabs.filter(visibleTab => visibleTab.index === this.currentIndex)[0];
-                this.options.tabContainer.showTab(tabPan);
->>>>>>> Renamed HammerCarousel to SwipeCarousel:src/TabSwipe/widget/SwipeCarousel.ts*/
-            }
-            percent = 0;
-            animate = true;
+        if (event.isFinal) { // should be used in panonend or panoncancel event
+            const movedPercent = Math.abs(event.deltaX / this.container.offsetWidth) * 100;
+            let finalSteps = Math.abs(movedPercent) > this.threshold ? 1 : 0;
+            finalSteps *= event.deltaX < 0 ? 1 : -1; // finalSteps = event.deltaX<0?finalSteps:finalSteps*-1
+            let finalVisibilityIndex = finalSteps + this.activePan.visibilityIndex;
+            finalVisibilityIndex = finalVisibilityIndex > (this.visibleTabs.length - 1)
+                ? this.visibleTabs.length - 1
+                : finalVisibilityIndex < 0 ? 0 : finalVisibilityIndex;
+            // this.container.classList.add("animate");
+            clearTimeout( this.timeoutValue );
+            this.timeoutValue = setTimeout( () => {
+                this.options.tabContainer.showTab(this.visibleTabs[finalVisibilityIndex]);
+                this.container.classList.remove("animate");
+            }, 400 );
         }
-        this.ticking = false;
+
     }
 
     /**
