@@ -1,20 +1,18 @@
-.widget-swipe-tab.mx-tabcontainer {
+.widget-tab-swipe.mx-tabcontainer {
     overflow:hidden;
     width: 100%;
     position: relative;
 }
 
-.widget-swipe-tabswipe-tab > .mx-tabcontainer-content {
+.widget-tab-swipe > .mx-tabcontainer-content {
     height: auto;
     position: relative;
     transition: height 0.2s;
     -webkit-transition: height 0.2s;
     display: block;
-
 }
 
-
-.widget-swipe-tab > .mx-tabcontainer-content > .mx-tabcontainer-pane {
+.widget-tab-swipe > .mx-tabcontainer-content > .mx-tabcontainer-pane {
     width: 100%;
     height: auto;
     transition: all 0.6s;
@@ -24,14 +22,12 @@
     left: 0;
 }
 
-.widget-swipe-tab > .mx-tabcontainer-content > .mx-tabcontainer-pane.active {
+.widget-tab-swipe > .mx-tabcontainer-content > .mx-tabcontainer-pane.active {
     position: relative;
 }
 
-
-.widget-swipe-tab > .mx-tabcontainer-content.animate > .mx-tabcontainer-pane {
+.widget-tab-swipe > .mx-tabcontainer-content.animate > .mx-tabcontainer-pane {
     transition: all 0.6s ease-in-out;
     -webkit-transition: all 0.6s;
     will-change: transform, opacity;
-
 }
