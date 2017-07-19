@@ -1,9 +1,9 @@
-import { Component, DOM } from "react";
+import { Component, createElement } from "react";
 
 // tslint:disable-next-line class-name
 export class preview extends Component<{}, {}> {
 
     render() {
-        return DOM.div({ className: "widget-tab-swipe-preview" });
+        return createElement("div", { className: "widget-tab-swipe-preview" });
     }
 }
