@@ -16,6 +16,7 @@ export class SwipeCarousel {
     private hammer: HammerManager;
     private threshold: number;
     private timeoutValue: number;
+    private containerWidth: number;
 
     constructor(options: SwipeOptions) {
         this.options = options;
@@ -23,6 +24,7 @@ export class SwipeCarousel {
         this.container = options.contentContainer;
         this.tabPanes = [].slice.call(options.tabContainer.getChildren());
         this.activePan = options.tabContainer._active;
+        this.containerWidth = this.container.offsetWidth;
 
         this.hammerSetup();
     }
@@ -47,10 +49,11 @@ export class SwipeCarousel {
             const transform = `translate3d(${diff * 100}%, 0, 0)`;
             tabPan.domNode.style.transform = transform;
         });
+        this.containerWidth = this.container.offsetWidth;
     }
 
     private onPanMove(event: HammerInput) {
-        const percentageMoved = (event.deltaX / this.container.offsetWidth) * 100 ; // no-of-pages-moved or %age moved
+        const percentageMoved = (event.deltaX / this.containerWidth) * 100 ; // no-of-pages-moved or %age moved
 
         this.container.classList.add("animate");
         // DJK: too many translate3ds modify to use %age of tabcontent width eg:
@@ -72,7 +75,7 @@ export class SwipeCarousel {
     }
 
     private onPanEnd(event: HammerInput) {
-        const movedPercentage = Math.abs(event.deltaX / this.container.offsetWidth) * 100;
+        const movedPercentage = Math.abs(event.deltaX / this.containerWidth) * 100;
         if (Math.abs(movedPercentage) > this.threshold) {
             const movedRatio = movedPercentage / 100;
             let movedSteps = Math.max(1, Math.floor(movedRatio));
@@ -86,6 +89,8 @@ export class SwipeCarousel {
                 this.options.tabContainer.showTab(this.visibleTabs[finalVisibilityIndex]);
                 this.container.classList.remove("animate");
             }, 400);
+        } else {
+            this.options.tabContainer.showTab(this.activePan);
         }
     }
 
