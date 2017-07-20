@@ -32,7 +32,7 @@ export class SwipeCarousel {
     hammerSetup() {
         this.hammer = new Hammer.Manager(this.container);
         this.hammer.add(new Hammer.Pan({ threshold: 10, direction: Hammer.DIRECTION_HORIZONTAL }));
-        this.hammer.on("panstart", event => this.onPanStart());
+        this.hammer.on("panstart", event => this.onPanStart(event));
         this.hammer.on("panmove", event => this.onPanMove(event));
         this.hammer.on("panend", event => this.onPanEnd(event));
 
@@ -53,6 +53,7 @@ export class SwipeCarousel {
     }
 
     private onPanMove(event: HammerInput) {
+        if (event.pointerType === "mouse") return;
         const percentageMoved = (event.deltaX / this.containerWidth) * 100 ; // no-of-pages-moved or %age moved
 
         this.container.classList.add("animate");
@@ -68,13 +69,15 @@ export class SwipeCarousel {
         });
     }
 
-    private onPanStart() {
+    private onPanStart(event: HammerInput) {
+        if (event.pointerType === "mouse") return;
         this.visibleTabs = this.tabPanes.filter(tabPan => !tabPan._hidden); // visible tabs;
         this.activePan = this.options.tabContainer._active;
         this.activePan.visibilityIndex = this.visibleTabs.indexOf(this.activePan);
     }
 
     private onPanEnd(event: HammerInput) {
+        if (event.pointerType === "mouse") return;
         const movedPercentage = Math.abs(event.deltaX / this.containerWidth) * 100;
         if (Math.abs(movedPercentage) > this.threshold) {
             const movedRatio = movedPercentage / 100;
