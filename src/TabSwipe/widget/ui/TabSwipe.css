@@ -31,3 +31,11 @@
     -webkit-transition: all 0.6s;
     will-change: transform, opacity;
 }
+
+.widget-tab-swipe.use-indicators {
+    position: relative;    
+}
+
+.widget-tab-swipe.use-indicators > .carousel-indicators > li {
+    text-indent: -9999px;   
+}
