@@ -42,22 +42,18 @@ interface TabOptions {
     swipeClass: string;
     selectionClass: string;
     targetWidgetType: string;
-    activeTabHeight: number;
 }
 
-// tslint:disable : max-classes-per-file
 class TabSwipe extends WidgetBase {
     private settings: TabOptions;
     private targetName: string;
     private targetWidget: TabContainer;
     private targetNode: HTMLElement;
     private carousel: SwipeCarousel;
-    private tabNavStyle: "tabs" | "indicators";
-    private animationStyle: "moveIn" | "moveOver";
+    private tabNavStyle: "tabs"| "indicators";
 
     postCreate() {
         this.settings = {
-            activeTabHeight: 0,
             selectionClass: ".mx-tabcontainer-content",
             swipeClass: "widget-tab-swipe",
             targetWidgetType: "mxui.widget.TabContainer"
@@ -66,30 +62,21 @@ class TabSwipe extends WidgetBase {
         this.targetWidget = this.targetNode ? registry.byNode(this.targetNode) : null;
         if (this.checkCompatibility(this.targetWidget)) {
             this.targetWidget.connectedTabSwipe = this.id;
-            domClass.add(this.targetWidget.domNode, this.settings.swipeClass);
+            this.targetNode.classList.add(this.settings.swipeClass);
         }
     }
 
-    /**
-     * called when context is changed or initialized.
-     * Though we are not interested in the context object it self, Tab could be updated on it.
-     * @param {type} obj - object in context
-     * @param {type} callback - callback when update is completed
-     * @returns {undefined}
-     */
     update(contextObject: mendix.lib.MxObject, callback: () => void) {
         if (this.targetWidget) {
             domClass.add(this.targetNode, this.settings.swipeClass);
-            this.hammerTime();
+            this.setCarouselIndicators();
+            this.applyCarousel();
             this.setupEvents();
         }
         callback();
     }
 
-    /**
-     * change te tab container button, transform in to carousel indicators.
-     */
-    setTabNavStyle() {
+    private setCarouselIndicators() {
         domClass.remove(this.targetNode, "use-indicators");
         if (this.tabNavStyle === "indicators") {
             domClass.add(this.targetNode, "use-indicators");
@@ -98,11 +85,7 @@ class TabSwipe extends WidgetBase {
             domClass.add(navNode, "carousel-indicators");
         }
     }
-
-    /**
-     * connect target widget events
-     */
-    setupEvents() {
+    private setupEvents() {
         // connect to tab clicking
         this.own(aspect.after(this.targetWidget, "showTab", (deferred: any, args: any) => {
             const tab = args[0] as TabPan;
@@ -127,10 +110,9 @@ class TabSwipe extends WidgetBase {
         return true;
     }
 
-    hammerTime() {
+    private applyCarousel() {
         const swipeOptions: SwipeOptions = {
             contentContainer: this.targetWidget.domNode.querySelector(this.settings.selectionClass) as HTMLElement,
-            effect: this.animationStyle,
             tabContainer: this.targetWidget
         };
         this.carousel = new SwipeCarousel(swipeOptions);
