@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <widget id="TabSwipe.widget.TabSwipe" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../../xsd/widget.xsd">
     <name>Tab Swipe</name>
-    <description>The description of this widget.</description>
+    <description>Swipe to navigate between tabs</description>
 
     <icon />
     <properties>
@@ -30,4 +30,3 @@
         </property>
     </properties>
 </widget>
-
