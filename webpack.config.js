@@ -31,13 +31,7 @@ const widgetConfig = {
     devtool: "source-map",
     externals: [
         "mxui/widget/_WidgetBase",
-        "dojo/aspect",
-        "dojo/_base/declare",
-        "dojo/dom-class",
-        "dojo/dom-style",
-        "dojo/dom-construct",
-        "dojo/dom-geometry",
-        "dijit/registry"
+        /^(dojo|dijit)/i,
     ],
     plugins: [
         new CopyWebpackPlugin([

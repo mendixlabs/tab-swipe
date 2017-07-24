@@ -1,30 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget id="TabSwipe.widget.TabSwipe" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../../xsd/widget.xsd">
+<widget id="TabSwipe.widget.TabSwipe" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../../../xsd/widget.xsd">
     <name>Tab Swipe</name>
     <description>Swipe to navigate between tabs</description>
-
-    <icon />
+    <icon/>
     <properties>
         <property key="targetName" type="string">
-            <caption>Target name</caption>
+            <caption>Target tab name</caption>
             <category>General</category>
             <description>Name of the tab-container. Place this widget directly below the tab container</description>
         </property>
-        <property key="animationStyle" type="enumeration" required="true" defaultValue="moveIn">
-            <caption>Animation style</caption>
-            <category>Appearance</category>
-            <description></description>
-            <enumerationValues>
-                <enumerationValue key="moveIn">Move in</enumerationValue>
-                <enumerationValue key="moveOver">Move over</enumerationValue>
-            </enumerationValues>
-        </property>
-        <property key="tabNavStyle" type="enumeration" required="true" defaultValue="tabs">
+        <property key="tabNavStyle" type="enumeration" defaultValue="tabs">
             <caption>Tab style</caption>
             <category>Appearance</category>
-            <description>Tabs: display as default mendix tabs. Indicators: Use carousel-like indicators instead of tab-pages for navigation </description>
+            <description>Indicators: navigate using carousel-like indicators instead of tab panes</description>
             <enumerationValues>
-                <enumerationValue key="tabs">Tabs</enumerationValue>
+                <enumerationValue key="tabs">Default</enumerationValue>
                 <enumerationValue key="indicators">Indicators</enumerationValue>
             </enumerationValues>
         </property>

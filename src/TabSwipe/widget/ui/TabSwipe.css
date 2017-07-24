@@ -33,9 +33,9 @@
 }
 
 .widget-tab-swipe.use-indicators {
-    position: relative;    
+    position: relative;
 }
 
 .widget-tab-swipe.use-indicators > .carousel-indicators > li {
-    text-indent: -9999px;   
+    text-indent: -9999px;
 }
