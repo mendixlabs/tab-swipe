@@ -2,12 +2,11 @@ import * as dojoDeclare from "dojo/_base/declare";
 import * as WidgetBase from "mxui/widget/_WidgetBase";
 import * as aspect from "dojo/aspect";
 import * as domConstruct from "dojo/dom-construct";
-import * as domClass from "dojo/dom-class";
 import * as registry from "dijit/registry";
 
 import "./ui/TabSwipe.css";
 
-import { SwipeCarousel, SwipeOptions } from "./SwipeCarousel";
+import { SwipeCarousel } from "./SwipeCarousel";
 
 export interface TabContainer extends mxui.widget._WidgetBase {
     declaredClass: "mxui.widget.TabContainer";
@@ -15,7 +14,7 @@ export interface TabContainer extends mxui.widget._WidgetBase {
     focusIndex: number;
     onShowTab: (callback: () => void ) => void;
     onHideTab: (callback: () => void ) => void;
-    connectedTabSwipe: string;
+    tabSwipeId: string;
     validator: null;
     _active: TabPan;
     _tabList: HTMLElement;
@@ -38,125 +37,111 @@ export interface TabPan extends mxui.widget._WidgetBase {
     visibilityIndex: number;
 }
 
-interface TabOptions {
-    swipeClass: string;
-    selectionClass: string;
-    targetWidgetType: string;
-}
-
 class TabSwipe extends WidgetBase {
-    private settings: TabOptions;
     private targetName: string;
-    private targetWidget: TabContainer;
-    private targetNode: HTMLElement;
-    private carousel: SwipeCarousel;
     private tabNavStyle: "tabs"| "indicators";
 
+    private targetWidget?: TabContainer;
+    private targetNode: HTMLElement;
+    private carousel: SwipeCarousel;
+    private tabContentClass: string;
+    private swipeClass: string;
+    private targetWidgetType: string;
+
     postCreate() {
-        this.settings = {
-            selectionClass: ".mx-tabcontainer-content",
-            swipeClass: "widget-tab-swipe",
-            targetWidgetType: "mxui.widget.TabContainer"
-        };
+        this.tabContentClass = ".mx-tabcontainer-content";
+        this.swipeClass = "widget-tab-swipe";
+        this.targetWidgetType = "mxui.widget.TabContainer";
         this.targetNode = this.findTargetNode(this.targetName);
         this.targetWidget = this.targetNode ? registry.byNode(this.targetNode) : null;
-        if (this.checkCompatibility(this.targetWidget)) {
-            this.targetWidget.connectedTabSwipe = this.id;
-            this.targetNode.classList.add(this.settings.swipeClass);
+
+        if (!this.targetWidget) {
+            this.showError(`Tab swipe configuration error: unable to find a target with the name ${this.targetName}`);
+        } else if (this.checkCompatibility(this.targetWidget)) {
+            this.targetWidget.tabSwipeId = this.id;
+            this.targetNode.classList.add(this.swipeClass);
+            this.applyIndicatorStyles(this.targetWidget);
+            this.initializeSwipe(this.targetWidget);
+            this.setupEvents(this.targetWidget);
         }
-    }
-
-    update(contextObject: mendix.lib.MxObject, callback: () => void) {
-        if (this.targetWidget) {
-            domClass.add(this.targetNode, this.settings.swipeClass);
-            this.setCarouselIndicators();
-            this.applyCarousel();
-            this.setupEvents();
-        }
-        callback();
-    }
-
-    private setCarouselIndicators() {
-        domClass.remove(this.targetNode, "use-indicators");
-        if (this.tabNavStyle === "indicators") {
-            domClass.add(this.targetNode, "use-indicators");
-            const navNode = this.targetWidget._tabList;
-            domClass.remove(navNode, [ "nav", "nav-tabs", "mx-tabcontainer-tabs" ]);
-            domClass.add(navNode, "carousel-indicators");
-        }
-    }
-    private setupEvents() {
-        // connect to tab clicking
-        this.own(aspect.after(this.targetWidget, "showTab", (deferred: any, args: any) => {
-            const tab = args[0] as TabPan;
-            this.carousel.showTab(tab);
-        }));
-
-        this.own(aspect.after(this.targetWidget, "onShowTab", (deferred: any, args: any) => {
-            this.carousel.showTab(args[0] as TabPan);
-        }));
-
-        this.own(aspect.after(this.targetWidget, "onHideTab", () => {
-            if (this.targetWidget._active) {
-                this.carousel.showTab(this.targetWidget._active);
-            }
-        }));
     }
 
     uninitialize() {
         if (this.carousel) {
             this.carousel.destroy();
         }
-        return true;
-    }
 
-    private applyCarousel() {
-        const swipeOptions: SwipeOptions = {
-            contentContainer: this.targetWidget.domNode.querySelector(this.settings.selectionClass) as HTMLElement,
-            tabContainer: this.targetWidget
-        };
-        this.carousel = new SwipeCarousel(swipeOptions);
-    }
-
-    private checkCompatibility(widget: TabContainer) {
-        if (!widget) {
-            this.showError(`" is unable to find target with name ${this.targetName}`);
-            return false;
-        }
-        if (widget.declaredClass !== this.settings.targetWidgetType) {
-            this.showError(`target widget ${this.targetName} is not of type " + ${this.settings.targetWidgetType}`);
-            return false;
-        }
-
-        if (!widget._tabList || !widget._tabContent || !widget.showTab || !widget.onShowTab || !widget.onHideTab) {
-            this.showError(`The widget is not compatible with this mendix version.`);
-            return false;
-        }
-        if (widget.connectedTabSwipe) {
-            this.showError(`TabContainer '${this.targetName}' is already connected to tabSwipeWidget '` +
-                `${widget.connectedTabSwipe}. It can only be connected with one widget.`);
-            return false;
-        }
         return true;
     }
 
     private findTargetNode(name: string): HTMLElement {
         let queryNode = this.domNode.parentNode as Element;
-        let foundNode: HTMLElement | null = null;
-        while (!foundNode) {
-            foundNode = queryNode.querySelector(".mx-name-" + name) as HTMLElement;
+        let targetNode: HTMLElement | null = null;
+        while (!targetNode) {
+            targetNode = queryNode.querySelector(".mx-name-" + name) as HTMLElement;
             if (window.document.isEqualNode(queryNode)) { break; }
             queryNode = queryNode.parentNode as HTMLElement;
         }
 
-        return foundNode;
+        return targetNode;
     }
 
-    private showError(message: string, codeException = false) {
-        // Place the message inside the tabContainer, only when it is rendered, else the message is removed.
+    private checkCompatibility(widget?: TabContainer): boolean {
+        let errorMessage = "";
+        if (!widget) {
+            errorMessage = `" unable to find a target tab with the name ${this.targetName}`;
+        } else if (widget.declaredClass !== this.targetWidgetType) {
+            errorMessage = `target widget ${this.targetName} is not of the type " + ${this.targetWidgetType}`;
+        } else if (!widget._tabList || !widget._tabContent || !widget.showTab || !widget.onShowTab || !widget.onHideTab) { // tslint:disable-line max-line-length
+            errorMessage = "The widget is not compatible with this mendix version.";
+        } else if (widget.tabSwipeId) {
+            errorMessage = `TabContainer '${this.targetName}' is already connected to the widget '` +
+                `${widget.tabSwipeId}. It can only be connected with one widget.`;
+        }
+
+        if (errorMessage) {
+            this.showError(`Tab swipe configuration error: ${errorMessage}`);
+        }
+
+        return !errorMessage;
+    }
+
+    private initializeSwipe(targetWidget: TabContainer) {
+        this.carousel = new SwipeCarousel({
+            contentContainer: targetWidget.domNode.querySelector(this.tabContentClass) as HTMLElement,
+            tabContainer: targetWidget
+        });
+    }
+
+    private applyIndicatorStyles(targetWidget: TabContainer) {
+        if (this.tabNavStyle === "indicators") {
+            this.targetNode.classList.add("use-indicators");
+            targetWidget._tabList.classList.remove("nav", "nav-tabs", "mx-tabcontainer-tabs");
+            targetWidget._tabList.classList.add("carousel-indicators");
+        } else {
+            this.targetNode.classList.remove("use-indicators");
+        }
+    }
+    private setupEvents(targetWidget: TabContainer) {
+        this.own(aspect.after(targetWidget, "showTab", (deferred: any, args: any) => {
+            const tab = args[0] as TabPan;
+            this.carousel.showTab(tab);
+        }));
+
+        this.own(aspect.after(targetWidget, "onShowTab", (deferred: any, args: any) => {
+            this.carousel.showTab(args[0] as TabPan);
+        }));
+
+        this.own(aspect.after(targetWidget, "onHideTab", () => {
+            if (targetWidget._active) {
+                this.carousel.showTab(targetWidget._active);
+            }
+        }));
+    }
+
+    private showError(message: string) {
         const node = this.targetNode && this.targetNode.hasChildNodes() ? this.targetNode : this.domNode;
-        const type = codeException ? "TabSwipe code exception:" : "Tab swipe configuration error:";
-        domConstruct.place(`<div class='alert alert-danger'>${type}<br>- ${message}</div>`, node, "first");
+        domConstruct.place(`<div class='alert alert-danger'>${message}</div>`, node, "first");
         window.logger.error(this.id, `configuration error: ${message}`);
     }
 }

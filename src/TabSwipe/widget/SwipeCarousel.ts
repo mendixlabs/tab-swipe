@@ -53,7 +53,7 @@ export class SwipeCarousel {
     }
 
     private onPanMove(event: HammerInput) {
-        if (event.pointerType === "mouse") return;
+        // if (event.pointerType === "mouse") return; TODO: Activate for web swipe support
         const percentageMoved = (event.deltaX / this.containerWidth) * 100 ; // no-of-pages-moved or %age moved
 
         this.container.classList.add("animate");
