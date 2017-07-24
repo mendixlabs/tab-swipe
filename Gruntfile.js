@@ -8,14 +8,14 @@ const webpackConfigRelease = webpackConfig.map(config => merge(config, {
     plugins: [ new webpack.optimize.UglifyJsPlugin() ]
 }));
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     const pkg = grunt.file.readJSON("package.json");
     grunt.initConfig({
 
         watch: {
             updateWidgetFiles: {
                 files: [ "./src/**/*" ],
-                tasks: [ "webpack:develop", "file_append", "compress:dist", "copy:distDeployment", "copy:mpk" ],
+                tasks: [ "webpack:develop", "compress:dist", "copy:distDeployment", "copy:mpk" ],
                 options: {
                     debounceDelay: 250,
                     livereload: true
@@ -61,8 +61,8 @@ module.exports = function(grunt) {
         file_append: {
             addSourceURL: {
                 files: [ {
-                    append: "\n\n//# sourceURL=" + pkg.widgetName + ".webmodeler.js\n",
-                    input: "dist/tmp/src/" + pkg.widgetName + "/widget/" + pkg.widgetName + ".webmodeler.js"
+                    append: `\n\n//# sourceURL=${pkg.widgetName}.webmodeler.js\n`,
+                    input: `dist/tmp/src/${pkg.widgetName}/widget/${pkg.widgetName}.webmodeler.js`
                 } ]
             }
         },
@@ -77,6 +77,7 @@ module.exports = function(grunt) {
                 "./dist/" + pkg.version + "/" + pkg.widgetName + "/*",
                 "./dist/tmp/**/*",
                 "./dist/tsc/**/*",
+                "./dist/testresults/**/*",
                 "./dist/MxTestProject/deployment/web/widgets/" + pkg.widgetName + "/*",
                 "./dist/MxTestProject/widgets/" + pkg.widgetName + ".mpk"
             ]
