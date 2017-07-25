@@ -4,7 +4,7 @@ import * as aspect from "dojo/aspect";
 import * as domConstruct from "dojo/dom-construct";
 import * as registry from "dijit/registry";
 
-import "./ui/TabSwipe.css";
+import "./ui/TabSwipe.scss";
 
 import { SwipeHandler } from "./SwipeHandler";
 
@@ -61,9 +61,18 @@ class TabSwipe extends WidgetBase {
         } else if (this.checkCompatibility(this.targetWidget)) {
             this.targetWidget.tabSwipeId = this.id;
             this.targetNode.classList.add(this.swipeClass);
+        }
+    }
+
+    update(_contextObject: mendix.lib.MxObject, callback?: () => void) {
+        if (this.targetWidget) {
             this.applyIndicatorStyles(this.targetWidget);
             this.initializeSwipe(this.targetWidget);
             this.setupEvents(this.targetWidget);
+        }
+
+        if (callback) {
+            callback();
         }
     }
 
@@ -108,6 +117,9 @@ class TabSwipe extends WidgetBase {
     }
 
     private initializeSwipe(targetWidget: TabContainer) {
+        if (this.swipeHandler) {
+            this.swipeHandler.destroy();
+        }
         this.swipeHandler = new SwipeHandler({
             tabContainer: targetWidget,
             tabContainerContent: targetWidget.domNode.querySelector(this.tabContentClass) as HTMLElement
@@ -123,12 +135,13 @@ class TabSwipe extends WidgetBase {
             this.targetNode.classList.remove("use-indicators");
         }
     }
+
     private setupEvents(targetWidget: TabContainer) {
-        this.own(aspect.after(targetWidget, "showTab", (deferred: any, args: any) => {
+        this.own(aspect.after(targetWidget, "showTab", (_deferred: any, args: any) => {
             this.swipeHandler.updateTabPosition(args[0] as TabPane);
         }));
 
-        this.own(aspect.after(targetWidget, "onShowTab", (deferred: any, args: any) => {
+        this.own(aspect.after(targetWidget, "onShowTab", (_deferred: any, args: any) => {
             this.swipeHandler.updateTabPosition(args[0] as TabPane);
         }));
 

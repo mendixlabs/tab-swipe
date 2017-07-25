@@ -22,9 +22,9 @@ const widgetConfig = {
     module: {
         rules: [
             { test: /\.ts$/, use: "ts-loader" },
-            { test: /\.css$/, loader: ExtractTextPlugin.extract({
+            { test: /\.scss$/, loader: ExtractTextPlugin.extract({
                 fallback: "style-loader",
-                use: "css-loader"
+                use: "css-loader!sass-loader"
             }) }
         ]
     },

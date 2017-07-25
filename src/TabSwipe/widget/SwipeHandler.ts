@@ -15,7 +15,8 @@ export class SwipeHandler {
 
     private hammer: HammerManager;
     private threshold: number;
-    private thresholdCompensation: number;
+    private isSwiping: boolean;
+    private panStartPosition = 0;
     private containerWidth: number;
 
     constructor(options: SwipeOptions) {
@@ -40,8 +41,8 @@ export class SwipeHandler {
         this.containerWidth = this.tabContainerContent.offsetWidth;
     }
 
-    setActivePane() {
-        this.activePane = this.tabContainer._active;
+    destroy() {
+        this.hammer.destroy();
     }
 
     private hammerSetup() {
@@ -51,40 +52,52 @@ export class SwipeHandler {
         this.hammer.on("panmove", event => this.onPanMove(event));
         this.hammer.on("panend", event => this.onPanEnd(event));
 
+        this.tabPanes.forEach(tabPane => {
+            this.tabContainer.showTab(tabPane);
+        });
         this.tabContainer.showTab(this.activePane);
         this.updateTabPosition(this.activePane);
     }
 
     private onPanStart(event: HammerInput) {
-        // if (event.pointerType === "mouse") return;
+        if (event.pointerType === "mouse") return;
         this.activePane.visibilityIndex = this.visibleTabs.indexOf(this.activePane);
-        this.thresholdCompensation = event.deltaX;
+        this.panStartPosition = event.deltaX;
+        this.isSwiping = true;
     }
 
     private onPanMove(event: HammerInput) {
-        // if (event.pointerType === "mouse") return; TODO: Activate for web swipe support
-        this.tabContainerContent.classList.remove("animate");
-        this.tabContainerContent.style.transform = `translate3d(${this.getPercentageMoved(event)}%, 0, 0)`;
+        if (this.isSwiping && this.authorizeSwipe(event)) {
+            this.tabContainerContent.classList.remove("animate");
+            this.tabContainerContent.style.transform = `translate3d(${this.getPercentageMoved(event)}%, 0, 0)`;
+        } else {
+            this.isSwiping = false;
+        }
     }
 
     private onPanEnd(event: HammerInput) {
-        // if (event.pointerType === "mouse") return;
-        const percentageMoved = this.getPercentageMoved(event);
-        if (Math.abs(percentageMoved) > this.threshold) {
-            const newActiveIndex = percentageMoved < 0
-                ? this.activePane.visibilityIndex + 1
-                : this.activePane.visibilityIndex - 1;
-            this.tabContainer.showTab(this.visibleTabs[newActiveIndex]);
+        if (this.isSwiping) {
+            const percentageMoved = this.getPercentageMoved(event);
+            if (Math.abs(percentageMoved) > this.threshold) {
+                const newActiveIndex = this.activePane.visibilityIndex + this.getDirection(event);
+                this.tabContainer.showTab(this.visibleTabs[ newActiveIndex ]);
+            }
+            this.tabContainerContent.classList.add("animate");
+            this.tabContainerContent.style.transform = `translate3d(0, 0, 0)`;
+            this.isSwiping = false;
         }
-        this.tabContainerContent.classList.add("animate");
-        this.tabContainerContent.style.transform = `translate3d(0, 0, 0)`;
+    }
+
+    private authorizeSwipe(event: HammerInput): boolean {
+        return (this.getDirection(event) > 0 && this.activePane.visibilityIndex < this.visibleTabs.length - 1)
+            || (this.getDirection(event) < 0 && this.activePane.visibilityIndex !== 0);
     }
 
     private getPercentageMoved(event: HammerInput): number {
-        return (100 / this.containerWidth) * (event.deltaX - this.thresholdCompensation);
+        return (100 / this.containerWidth) * (event.deltaX - this.panStartPosition);
     }
 
-    destroy() {
-        this.hammer.destroy();
+    private getDirection(event: HammerInput): number {
+        return (event.deltaX - this.panStartPosition) > 0 ? -1 : 1;
     }
 }

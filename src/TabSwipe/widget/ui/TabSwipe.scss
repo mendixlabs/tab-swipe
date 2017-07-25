@@ -1,0 +1,52 @@
+.widget-tab-swipe {
+    &.mx-tabcontainer {
+        overflow:hidden;
+        width: 100%;
+        position: relative;
+    }
+
+    > .mx-tabcontainer-content {
+        height: auto;
+        position: relative;
+        transition: height 0.2s;
+        -webkit-transition: height 0.2s;
+        display: block;
+
+        > .mx-tabcontainer-pane {
+            width: 100%;
+            height: auto;
+            transition: all 0.6s;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            &.active {
+                position: relative;
+            }
+        }
+
+        @mixin animate() {
+            transition: all 0.6s ease-in-out;
+            -webkit-transition: all 0.6s;
+            will-change: transform, opacity;
+        }
+        &.animate {
+            @include animate();
+
+            > .mx-tabcontainer-pane {
+                @include animate();
+            }
+        }
+    }
+
+    &.use-indicators {
+        position: relative;
+
+        > .carousel-indicators {
+            > li {
+                text-indent: -9999px;
+            }
+        }
+    }
+}
