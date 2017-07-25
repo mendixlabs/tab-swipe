@@ -6,19 +6,19 @@ import * as registry from "dijit/registry";
 
 import "./ui/TabSwipe.css";
 
-import { SwipeCarousel } from "./SwipeCarousel";
+import { SwipeHandler } from "./SwipeHandler";
 
 export interface TabContainer extends mxui.widget._WidgetBase {
     declaredClass: "mxui.widget.TabContainer";
-    showTab: (tab: TabPan) => void;
+    showTab: (tab: TabPane) => void;
     focusIndex: number;
     onShowTab: (callback: () => void ) => void;
     onHideTab: (callback: () => void ) => void;
     tabSwipeId: string;
     validator: null;
-    _active: TabPan;
+    _active: TabPane;
     _tabList: HTMLElement;
-    _tabPanes: TabPan[];
+    _tabPanes: TabPane[];
     _tabContent: TabContent;
     _clickHandler: null;
 }
@@ -27,13 +27,14 @@ export interface TabContent extends HTMLElement {
     declaredClass: "mxui.widget.TabContent";
 }
 
-export interface TabPan extends mxui.widget._WidgetBase {
+export interface TabPane extends mxui.widget._WidgetBase {
     container: TabContainer;
     _hidden: boolean;
-    showTab: (tab: TabPan) => void;
+    showTab: (tab: TabPane) => void;
     show: () => void;
     hideTab: () => void;
     index: number;
+    _visible: boolean;
     visibilityIndex: number;
 }
 
@@ -43,7 +44,7 @@ class TabSwipe extends WidgetBase {
 
     private targetWidget?: TabContainer;
     private targetNode: HTMLElement;
-    private carousel: SwipeCarousel;
+    private swipeHandler: SwipeHandler;
     private tabContentClass: string;
     private swipeClass: string;
     private targetWidgetType: string;
@@ -67,8 +68,8 @@ class TabSwipe extends WidgetBase {
     }
 
     uninitialize() {
-        if (this.carousel) {
-            this.carousel.destroy();
+        if (this.swipeHandler) {
+            this.swipeHandler.destroy();
         }
 
         return true;
@@ -107,9 +108,9 @@ class TabSwipe extends WidgetBase {
     }
 
     private initializeSwipe(targetWidget: TabContainer) {
-        this.carousel = new SwipeCarousel({
-            contentContainer: targetWidget.domNode.querySelector(this.tabContentClass) as HTMLElement,
-            tabContainer: targetWidget
+        this.swipeHandler = new SwipeHandler({
+            tabContainer: targetWidget,
+            tabContainerContent: targetWidget.domNode.querySelector(this.tabContentClass) as HTMLElement
         });
     }
 
@@ -124,17 +125,16 @@ class TabSwipe extends WidgetBase {
     }
     private setupEvents(targetWidget: TabContainer) {
         this.own(aspect.after(targetWidget, "showTab", (deferred: any, args: any) => {
-            const tab = args[0] as TabPan;
-            this.carousel.showTab(tab);
+            this.swipeHandler.updateTabPosition(args[0] as TabPane);
         }));
 
         this.own(aspect.after(targetWidget, "onShowTab", (deferred: any, args: any) => {
-            this.carousel.showTab(args[0] as TabPan);
+            this.swipeHandler.updateTabPosition(args[0] as TabPane);
         }));
 
         this.own(aspect.after(targetWidget, "onHideTab", () => {
             if (targetWidget._active) {
-                this.carousel.showTab(targetWidget._active);
+                this.swipeHandler.updateTabPosition(targetWidget._active);
             }
         }));
     }

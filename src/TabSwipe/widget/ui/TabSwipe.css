@@ -26,6 +26,7 @@
     position: relative;
 }
 
+.widget-tab-swipe > .mx-tabcontainer-content.animate,
 .widget-tab-swipe > .mx-tabcontainer-content.animate > .mx-tabcontainer-pane {
     transition: all 0.6s ease-in-out;
     -webkit-transition: all 0.6s;
