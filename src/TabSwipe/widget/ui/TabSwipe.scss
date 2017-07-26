@@ -33,19 +33,21 @@
         }
         &.animate {
             @include animate();
-
-            > .mx-tabcontainer-pane {
-                @include animate();
-            }
         }
     }
 
-    &.use-indicators {
+    &.carousel {
         position: relative;
 
-        > .carousel-indicators {
-            > li {
-                text-indent: -9999px;
+        .carousel-indicators {
+            li {
+                width: 12px;
+                height: 12px;
+                margin: 5px;
+            }
+
+            .active {
+                margin: 5px;
             }
         }
     }

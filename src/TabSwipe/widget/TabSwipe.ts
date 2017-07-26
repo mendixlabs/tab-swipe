@@ -128,11 +128,11 @@ class TabSwipe extends WidgetBase {
 
     private applyIndicatorStyles(targetWidget: TabContainer) {
         if (this.tabNavStyle === "indicators") {
-            this.targetNode.classList.add("use-indicators");
+            this.targetNode.classList.add("carousel");
             targetWidget._tabList.classList.remove("nav", "nav-tabs", "mx-tabcontainer-tabs");
             targetWidget._tabList.classList.add("carousel-indicators");
         } else {
-            this.targetNode.classList.remove("use-indicators");
+            this.targetNode.classList.remove("carousel");
         }
     }
 
