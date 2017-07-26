@@ -4,9 +4,8 @@ import * as aspect from "dojo/aspect";
 import * as domConstruct from "dojo/dom-construct";
 import * as registry from "dijit/registry";
 
-import "./ui/TabSwipe.scss";
-
 import { SwipeHandler } from "./SwipeHandler";
+import "./ui/TabSwipe.scss";
 
 export interface TabContainer extends mxui.widget._WidgetBase {
     declaredClass: "mxui.widget.TabContainer";
