@@ -133,7 +133,8 @@
       }
     ],
     "curly": false,
-    "arrow-parens": false
+    "arrow-parens": false,
+    "object-literal-sort-keys": false
   },
   "jsRules": {
     "trailing-comma": [

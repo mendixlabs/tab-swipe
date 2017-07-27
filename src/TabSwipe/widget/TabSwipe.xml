@@ -9,6 +9,11 @@
             <category>General</category>
             <description>Name of the tab-container. Place this widget directly below the tab container</description>
         </property>
+        <property key="lazyLoad" type="boolean" defaultValue="false">
+            <caption>Lazy load tabs</caption>
+            <category>General</category>
+            <description>When true, tabs are only loaded on swipe and on show. Otherwise, all tabs are loaded initially</description>
+        </property>
         <property key="tabNavStyle" type="enumeration" defaultValue="tabs">
             <caption>Tab style</caption>
             <category>Appearance</category>

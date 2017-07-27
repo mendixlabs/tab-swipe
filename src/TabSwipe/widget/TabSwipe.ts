@@ -40,6 +40,7 @@ export interface TabPane extends mxui.widget._WidgetBase {
 class TabSwipe extends WidgetBase {
     private targetName: string;
     private tabNavStyle: "tabs"| "indicators";
+    private lazyLoad: boolean;
 
     private targetWidget?: TabContainer;
     private targetNode: HTMLElement;
@@ -121,7 +122,8 @@ class TabSwipe extends WidgetBase {
         }
         this.swipeHandler = new SwipeHandler({
             tabContainer: targetWidget,
-            tabContainerContent: targetWidget.domNode.querySelector(this.tabContentClass) as HTMLElement
+            tabContainerContent: targetWidget.domNode.querySelector(this.tabContentClass) as HTMLElement,
+            lazyLoad: this.lazyLoad
         });
     }
 
@@ -137,16 +139,16 @@ class TabSwipe extends WidgetBase {
 
     private setupEvents(targetWidget: TabContainer) {
         this.own(aspect.after(targetWidget, "showTab", (_deferred: any, args: any) => {
-            this.swipeHandler.updateTabPosition(args[0] as TabPane);
+            this.swipeHandler.setTabPanePosition(args[0] as TabPane);
         }));
 
         this.own(aspect.after(targetWidget, "onShowTab", (_deferred: any, args: any) => {
-            this.swipeHandler.updateTabPosition(args[0] as TabPane);
+            this.swipeHandler.setTabPanePosition(args[0] as TabPane);
         }));
 
         this.own(aspect.after(targetWidget, "onHideTab", () => {
             if (targetWidget._active) {
-                this.swipeHandler.updateTabPosition(targetWidget._active);
+                this.swipeHandler.setTabPanePosition(targetWidget._active);
             }
         }));
     }
