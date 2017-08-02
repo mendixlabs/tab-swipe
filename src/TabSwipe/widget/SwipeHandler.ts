@@ -20,7 +20,7 @@ export class SwipeHandler {
     private isSwiping = false;
     private panStartPosition = 0;
     private containerWidth: number;
-    private dependentPaneVisible: boolean;
+    private isLazyLoaded: boolean;
 
     constructor(options: SwipeOptions) {
         this.threshold = 20;
@@ -83,6 +83,7 @@ export class SwipeHandler {
     }
 
     private onPanStart(event: HammerInput) {
+        // Cancel mouse events
         if (event.pointerType === "mouse") return;
         this.activePane.visibilityIndex = this.visibleTabs.indexOf(this.activePane);
         this.panStartPosition = event.deltaX;
@@ -91,7 +92,7 @@ export class SwipeHandler {
 
     private onPanMove(event: HammerInput) {
         if (this.isSwiping && this.authorizeSwipe(event)) {
-            this.lazyLoadTabPane(event);
+            this.lazyLoadTabPane();
             this.tabContainerContent.classList.remove("animate");
             this.tabContainerContent.style.transform = `translate3d(${this.getPercentageMoved(event)}%, 0, 0)`;
         } else {
@@ -102,7 +103,7 @@ export class SwipeHandler {
     private onPanEnd(event: HammerInput) {
         if (this.isSwiping) {
             this.isSwiping = false;
-            this.dependentPaneVisible = false;
+            this.isLazyLoaded = false;
             const percentageMoved = this.getPercentageMoved(event);
             if (Math.abs(percentageMoved) > this.threshold) {
                 const newActiveIndex = this.activePane.visibilityIndex + this.getDirection(event);
@@ -113,11 +114,12 @@ export class SwipeHandler {
         }
     }
 
-    private lazyLoadTabPane(event: HammerInput) {
-        if (this.lazyLoad && this.isSwiping && !this.dependentPaneVisible) {
-            this.showTab(this.tabPanes[this.activePane.visibilityIndex + this.getDirection(event)]);
+    private lazyLoadTabPane() {
+        if (this.lazyLoad && this.isSwiping && !this.isLazyLoaded) {
+            this.visibleTabs.filter(tabPan => tabPan.domNode.offsetHeight === 0)
+                .forEach(pane => this.showTab(pane));
             this.showTab(this.activePane);
-            this.dependentPaneVisible = true;
+            this.isLazyLoaded = true;
         }
     }
 
