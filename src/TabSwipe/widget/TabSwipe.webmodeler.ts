@@ -4,6 +4,6 @@ import { Component, createElement } from "react";
 export class preview extends Component<{}, {}> {
 
     render() {
-        return createElement("div", { className: "widget-tab-swipe-preview" });
+        return createElement("div", { className: "widget-tab-swipe-hide-preview" });
     }
 }
