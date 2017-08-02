@@ -14,7 +14,7 @@
             <category>General</category>
             <description>When true, tabs are only loaded on swipe and on show. Otherwise, all tabs are loaded initially</description>
         </property>
-        <property key="tabNavStyle" type="enumeration" defaultValue="tabs">
+        <property key="tabStyle" type="enumeration" defaultValue="tabs">
             <caption>Tab style</caption>
             <category>Appearance</category>
             <description>Indicators: navigate using carousel-like indicators instead of tab panes</description>
