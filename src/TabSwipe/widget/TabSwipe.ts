@@ -38,9 +38,9 @@ export interface TabPane extends mxui.widget._WidgetBase {
 }
 
 class TabSwipe extends WidgetBase {
-    private targetName: string;
-    private tabNavStyle: "tabs"| "indicators";
-    private lazyLoad: boolean;
+    targetName: string;
+    tabStyle: "tabs"| "indicators";
+    lazyLoad: boolean;
 
     private targetWidget?: TabContainer;
     private targetNode: HTMLElement;
@@ -76,7 +76,7 @@ class TabSwipe extends WidgetBase {
         }
     }
 
-    uninitialize() {
+    uninitialize(): boolean {
         if (this.swipeHandler) {
             this.swipeHandler.destroy();
         }
@@ -128,12 +128,10 @@ class TabSwipe extends WidgetBase {
     }
 
     private applyIndicatorStyles(targetWidget: TabContainer) {
-        if (this.tabNavStyle === "indicators") {
+        if (this.tabStyle === "indicators") {
             this.targetNode.classList.add("carousel");
             targetWidget._tabList.classList.remove("nav", "nav-tabs", "mx-tabcontainer-tabs");
             targetWidget._tabList.classList.add("carousel-indicators");
-        } else {
-            this.targetNode.classList.remove("carousel");
         }
     }
 
