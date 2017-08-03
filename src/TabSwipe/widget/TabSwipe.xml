@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget id="TabSwipe.widget.TabSwipe" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../../../xsd/widget.xsd">
+<widget id="TabSwipe.widget.TabSwipe" needsEntityContext="false" offlineCapable="true" xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../../../xsd/widget.xsd">
     <name>Tab Swipe</name>
     <description>Swipe to navigate between tabs</description>
-    <icon/>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAABAAAAAPCAMAAADarb8dAAAA9lBMVEWAgICCgoIODg6BgYF9fX1zc3OAgIB5eXlzc3Nra2twcHBlZWVfX19aWlpSUlJNTU1FRUU7OzshISENDQ3q6uonr/M/mdRGqeVPot1Sk8hYpN1cqOJdl8lereVkpdZop9htuuxyqth8ued9y/iDrdGEvOeFrdKFrtKFr9KGueSGuuWhuM+rw9mtvdKuvtKwsLC7u7vHx8fN3OjO3OnO3enP3Onb5/Hf5evh4eHh5uzj4+Pl6/Hm5ubm7PHn5+fp6enq6urr6+vs7Ozt7e3v7+/x8fHy8vLz8/P19fX29vb4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7///8mKec1AAAAFXRSTlMiOVlZWmZmZ2hpaWprbG1ub3B0d9OkuEqzAAAAmUlEQVQI103OsQ4BARCE4Zm9DRGOu0olkUg8icYTexada0UQXCTYWY2L+4uvnSGKAiHriMLrzfr4rjpeHG4TPCw7dk4lmA2AbADQTQIX+MW9p4R/lm4ptO8KwHU4As0p3c/+Idme5mPSKR3t+VAqFSvSmTG+aZKpNsswOjMqqgZwKabhdIZQQgBmEILO7M8mnTbo/yCtRr/LF1bOTyF9Of/+AAAAAElFTkSuQmCC</icon>
     <properties>
         <property key="targetName" type="string">
             <caption>Target tab name</caption>
