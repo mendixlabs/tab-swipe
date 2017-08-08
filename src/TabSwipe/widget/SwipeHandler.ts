@@ -39,9 +39,14 @@ export class SwipeHandler {
             this.visibleTabs = this.tabPanes.filter(tabPan => !tabPan._hidden);
             this.activePane = this.tabContainer._active;
             tab.visibilityIndex = this.visibleTabs.indexOf(tab);
-            this.visibleTabs.forEach((tabPan, index) => {
+            this.visibleTabs.forEach((tabPane, index) => {
                 const diff = index - this.activePane.visibilityIndex;
-                tabPan.domNode.style.transform = `translate3d(${diff * 100}%, 0, 0)`;
+                tabPane.domNode.style.transform = `translate3d(${diff * 100}%, 0, 0)`;
+                if (this.lazyLoad && !tabPane._parsed) {
+                    tabPane.domNode.classList.add("widget-tab-swipe-lazy-pane");
+                } else {
+                    tabPane.domNode.classList.remove("widget-tab-swipe-lazy-pane");
+                }
             });
             this.containerWidth = this.tabContainerContent.offsetWidth;
         }
@@ -92,7 +97,7 @@ export class SwipeHandler {
 
     private onPanMove(event: HammerInput) {
         if (this.isSwiping && this.authorizeSwipe(event)) {
-            this.lazyLoadTabPane();
+            this.lazyLoadTabPane(event);
             this.tabContainerContent.classList.remove("animate");
             this.tabContainerContent.style.transform = `translate3d(${this.getPercentageMoved(event)}%, 0, 0)`;
         } else {
@@ -114,10 +119,11 @@ export class SwipeHandler {
         }
     }
 
-    private lazyLoadTabPane() {
+    private lazyLoadTabPane(event: HammerInput) {
         if (this.lazyLoad && this.isSwiping && !this.isLazyLoaded) {
-            this.visibleTabs.filter(tabPan => tabPan.domNode.offsetHeight === 0)
-                .forEach(pane => this.showTab(pane));
+            const nextTab = this.tabPanes[this.activePane.visibilityIndex + this.getDirection(event)];
+            nextTab.domNode.classList.remove("widget-tab-swipe-lazy-pane");
+            this.showTab(nextTab);
             this.showTab(this.activePane);
             this.isLazyLoaded = true;
         }

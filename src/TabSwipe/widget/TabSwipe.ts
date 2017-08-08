@@ -27,13 +27,14 @@ export interface TabContent extends HTMLElement {
 }
 
 export interface TabPane extends mxui.widget._WidgetBase {
-    container: TabContainer;
     _hidden: boolean;
+    _parsed: boolean;
+    _visible: boolean;
+    container: TabContainer;
     showTab: (tab: TabPane) => void;
     show: () => void;
     hideTab: () => void;
     index: number;
-    _visible: boolean;
     visibilityIndex: number;
 }
 

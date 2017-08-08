@@ -24,6 +24,11 @@
             &.active {
                 position: relative;
             }
+
+            &.widget-tab-swipe-lazy-pane {
+                background-color: gray;
+                height: 100%;
+            }
         }
 
         @mixin animate() {
