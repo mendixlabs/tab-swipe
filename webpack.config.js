@@ -2,9 +2,8 @@ const webpack = require("webpack");
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-
-const package = require("./package");
-const widgetName = package.widgetName;
+const nodePackage = require("./package");
+const widgetName = nodePackage.widgetName;
 
 const widgetConfig = {
     entry: `./src/${widgetName}/widget/${widgetName}.ts`,
@@ -14,7 +13,7 @@ const widgetConfig = {
         libraryTarget:  "amd"
     },
     resolve: {
-        extensions: [ ".ts", ".js", ".json" ],
+        extensions: [ ".ts", ".js" ],
         alias: {
             "tests": path.resolve(__dirname, "./tests")
         }
@@ -29,21 +28,14 @@ const widgetConfig = {
         ]
     },
     devtool: "source-map",
-    externals: [
-        "mxui/widget/_WidgetBase",
-        /^(dojo|dijit)/i,
-    ],
+    externals: [ /^mxui\/|^mendix\/|^dojo\/|^dijit\// ],
     plugins: [
         new CopyWebpackPlugin([
             { from: "src/**/*.js" },
             { from: "src/**/*.xml" }
-        ], {
-            copyUnmodified: true
-        }),
+        ], { copyUnmodified: true }),
         new ExtractTextPlugin({ filename: `./src/${widgetName}/widget/ui/${widgetName}.css` }),
-        new webpack.LoaderOptionsPlugin({
-            debug: true
-        })
+        new webpack.LoaderOptionsPlugin({ debug: true })
     ]
 };
 
@@ -64,9 +56,7 @@ const previewConfig = {
     },
     devtool: "inline-source-map",
     externals: [ "react", "react-dom" ],
-    plugins: [
-        new webpack.LoaderOptionsPlugin({ debug: true })
-    ]
+    plugins: [ new webpack.LoaderOptionsPlugin({ debug: true }) ]
 };
 
 module.exports = [ widgetConfig, previewConfig ];

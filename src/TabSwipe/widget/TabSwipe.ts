@@ -11,8 +11,8 @@ export interface TabContainer extends mxui.widget._WidgetBase {
     declaredClass: "mxui.widget.TabContainer";
     showTab: (tab: TabPane) => void;
     focusIndex: number;
-    onShowTab: (callback: () => void ) => void;
-    onHideTab: (callback: () => void ) => void;
+    onShowTab: (callback: () => void) => void;
+    onHideTab: (callback: () => void) => void;
     tabSwipeId: string;
     validator: null;
     _active: TabPane;
@@ -58,7 +58,7 @@ class TabSwipe extends WidgetBase {
         this.targetWidget = this.targetNode ? registry.byNode(this.targetNode) : null;
 
         if (!this.targetWidget) {
-            this.showError(`Tab swipe configuration error: unable to find a target with the name ${this.targetName}`);
+            this.showError(`Tab swipe configuration error: unable to find a target with the name ${this.targetName}. Please make sure that the widget is placed directly below a tab container`); // tslint:disable-line max-line-length
         } else if (this.checkCompatibility(this.targetWidget)) {
             this.targetWidget.tabSwipeId = this.id;
             this.targetNode.classList.add(this.swipeClass);
@@ -92,6 +92,7 @@ class TabSwipe extends WidgetBase {
             targetNode = queryNode.querySelector(".mx-name-" + name) as HTMLElement;
             if (window.document.isEqualNode(queryNode)) { break; }
             queryNode = queryNode.parentNode as HTMLElement;
+            if (queryNode.classList.contains("mx-incubator") || queryNode.classList.contains("mx-offscreen")) { break; }
         }
 
         return targetNode;
@@ -155,7 +156,7 @@ class TabSwipe extends WidgetBase {
     private showError(message: string) {
         const node = this.targetNode && this.targetNode.hasChildNodes() ? this.targetNode : this.domNode;
         domConstruct.place(`<div class='alert alert-danger'>${message}</div>`, node, "first");
-        window.logger.error(this.id, `configuration error: ${message}`);
+        window.logger.error(this.id, message);
     }
 }
 

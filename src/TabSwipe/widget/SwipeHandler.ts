@@ -40,8 +40,8 @@ export class SwipeHandler {
             this.activePane = this.tabContainer._active;
             tab.visibilityIndex = this.visibleTabs.indexOf(tab);
             this.visibleTabs.forEach((tabPane, index) => {
-                const diff = index - this.activePane.visibilityIndex;
-                tabPane.domNode.style.transform = `translate3d(${diff * 100}%, 0, 0)`;
+                const position = (index - this.activePane.visibilityIndex) * 100;
+                tabPane.domNode.style.transform = `translate3d(${position}%, 0, 0)`;
                 if (this.lazyLoad && !tabPane._parsed) {
                     tabPane.domNode.classList.add("widget-tab-swipe-lazy-pane");
                 } else {
@@ -69,13 +69,9 @@ export class SwipeHandler {
     private loadPanes() {
         const activePane = this.tabContainer._active;
         if (!this.lazyLoad) {
-            this.tabPanes.forEach(tabPane => {
-                this.showTab(tabPane, true);
-            });
+            this.tabPanes.forEach(tabPane => this.showTab(tabPane, true));
         } else {
-            this.tabPanes.forEach(tabPane => {
-                this.setTabPanePosition(tabPane);
-            });
+            this.tabPanes.forEach(tabPane => this.setTabPanePosition(tabPane));
         }
         this.showTab(activePane, true);
     }
@@ -99,7 +95,8 @@ export class SwipeHandler {
         if (this.isSwiping && this.authorizeSwipe(event)) {
             this.lazyLoadTabPane(event);
             this.tabContainerContent.classList.remove("animate");
-            this.tabContainerContent.style.transform = `translate3d(${this.getPercentageMoved(event)}%, 0, 0)`;
+            const position = this.getPercentageMoved(event);
+            this.tabContainerContent.style.transform = `translate3d(${position}%, 0, 0)`;
         } else {
             this.isSwiping = false;
         }

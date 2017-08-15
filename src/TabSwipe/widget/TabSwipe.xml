@@ -7,7 +7,7 @@
         <property key="targetName" type="string">
             <caption>Target tab name</caption>
             <category>General</category>
-            <description>Name of the tab-container. Place this widget directly below the tab container</description>
+            <description>Name of the tab-container</description>
         </property>
         <property key="lazyLoad" type="boolean" defaultValue="false">
             <caption>Lazy load tabs</caption>
