@@ -1,7 +1,7 @@
 {
   "name": "tab-swipe",
   "widgetName": "TabSwipe",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Swipe to navigate between tabs",
   "scripts": {
     "start": "nodemon --watch webpack.config.js --watch Gruntfile.js --exec \"grunt",
