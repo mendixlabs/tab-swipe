@@ -70,6 +70,10 @@ class TabSwipe extends WidgetBase {
             this.applyIndicatorStyles(this.targetWidget);
             this.initializeSwipe(this.targetWidget);
             this.setupEvents(this.targetWidget);
+            if (this.domNode) {
+                // Remove domNode to prevent effecting scroll behavior
+                domConstruct.destroy(this.domNode);
+            }
         }
 
         if (callback) {
