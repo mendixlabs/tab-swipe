@@ -10,7 +10,7 @@ const widgetConfig = {
     output: {
         path: path.resolve(__dirname, "dist/tmp"),
         filename: `src/${widgetName}/widget/${widgetName}.js`,
-        libraryTarget:  "amd"
+        libraryTarget: "amd"
     },
     resolve: {
         extensions: [ ".ts", ".js" ],
@@ -27,11 +27,11 @@ const widgetConfig = {
             }) }
         ]
     },
+    mode: "development",
     devtool: "source-map",
     externals: [ /^mxui\/|^mendix\/|^dojo\/|^dijit\// ],
     plugins: [
         new CopyWebpackPlugin([
-            { from: "src/**/*.js" },
             { from: "src/**/*.xml" }
         ], { copyUnmodified: true }),
         new ExtractTextPlugin({ filename: `./src/${widgetName}/widget/ui/${widgetName}.css` }),
@@ -54,6 +54,7 @@ const previewConfig = {
             { test: /\.ts$/, use: "ts-loader" },
         ]
     },
+    mode: "development",
     devtool: "inline-source-map",
     externals: [ "react", "react-dom" ],
     plugins: [ new webpack.LoaderOptionsPlugin({ debug: true }) ]

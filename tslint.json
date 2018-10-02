@@ -134,7 +134,9 @@
     ],
     "curly": false,
     "arrow-parens": false,
-    "object-literal-sort-keys": false
+    "object-literal-sort-keys": false,
+    "no-implicit-dependencies": false,
+    "no-submodule-imports": false
   },
   "jsRules": {
     "trailing-comma": [

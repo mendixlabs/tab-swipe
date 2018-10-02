@@ -5,7 +5,8 @@ const merge = require("webpack-merge");
 
 const webpackConfigRelease = webpackConfig.map(config => merge(config, {
     devtool: false,
-    plugins: [ new webpack.optimize.UglifyJsPlugin() ]
+    mode: "production",
+    optimization: { minimize: true }
 }));
 
 module.exports = function (grunt) {
@@ -15,7 +16,7 @@ module.exports = function (grunt) {
         watch: {
             updateWidgetFiles: {
                 files: [ "./src/**/*" ],
-                tasks: [ "webpack:develop", "compress:dist", "copy:distDeployment", "copy:mpk" ],
+                tasks: [ "webpack:develop", "compress:dist", "copy" ],
                 options: {
                     debounceDelay: 250,
                     livereload: true
@@ -100,7 +101,7 @@ module.exports = function (grunt) {
     grunt.registerTask(
         "clean build",
         "Compiles all the assets and copies the files to the dist directory.",
-        [ "checkDependencies", "clean:build", "webpack:develop", "file_append", "compress:dist", "copy:mpk" ]
+        [ "checkDependencies", "clean:build", "webpack:develop", "file_append", "compress:dist", "copy" ]
     );
     grunt.registerTask(
         "release",
